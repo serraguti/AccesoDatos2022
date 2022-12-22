@@ -6,10 +6,41 @@ namespace AccesoDatos
     {
         static void Main(string[] args)
         {
-            LeerRegistrosDept();
+            //LeerRegistrosDept();
             //InsertarDatosDept();
-            EliminarDeptParameters();
-            LeerRegistrosDept();
+            //EliminarDeptParameters();
+            //LeerRegistrosDept();
+            MostrarEmpleadosDepartamento();
+        }
+
+        static void MostrarEmpleadosDepartamento()
+        {
+            string connectionString = @"Data Source=LOCALHOST;Initial Catalog=HOSPITAL;Persist Security Info=True;User ID=SA";
+            SqlConnection cn = new SqlConnection(connectionString);
+            SqlCommand com = new SqlCommand();
+            SqlDataReader reader;
+            string sql = "select APELLIDO, OFICIO, SALARIO from EMP where DEPT_NO=@DEPTNO";
+            Console.WriteLine("Buscador de empleados");
+            Console.WriteLine("Introduzca ID departamento a buscar");
+            int idDepartamento = int.Parse(Console.ReadLine());
+            SqlParameter pamid = new SqlParameter("@DEPTNO", idDepartamento);
+            com.Parameters.Add(pamid);
+            com.Connection = cn;
+            com.CommandType = System.Data.CommandType.Text;
+            com.CommandText = sql;
+            cn.Open();
+            reader = com.ExecuteReader();
+            while (reader.Read())
+            {
+                string apellido = reader["APELLIDO"].ToString();
+                string oficio = reader["OFICIO"].ToString();
+                string salario = reader["SALARIO"].ToString();
+                Console.WriteLine(apellido + " - " + oficio + " - " + salario);
+            }
+            reader.Close();
+            cn.Close();
+            com.Parameters.Clear();
+            Console.WriteLine("Fin de programa");
         }
 
         static void EliminarDeptParameters()
