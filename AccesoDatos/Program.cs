@@ -1,9 +1,16 @@
 ﻿using System.Data.SqlClient;
+using AccesoDatos.Models;
+using AccesoDatos.Repositories;
 
 namespace AccesoDatos
 {
     internal class Program
     {
+        //CREAMOS LA CLASE REPOSITORY
+        //LO HACEMOS A NIVEL DE CLASE PARA UTILIZAR EL OBJETO EN 
+        //DISTINTOS METODOS, COMO POR EJEMPLO, INSERTAR O ELIMINAR
+        static RepositoryDepartamentos repo = new RepositoryDepartamentos();
+
         static void Main(string[] args)
         {
             //LeerRegistrosDept();
@@ -12,9 +19,89 @@ namespace AccesoDatos
             //LeerRegistrosDept();
             //MostrarEmpleadosDepartamento();
             //ModificarSalas();
-            MostrarEnfermos();
-            EliminarEnfermo();
-            MostrarEnfermos();
+            //MostrarEnfermos();
+            //EliminarEnfermo();
+            //MostrarEnfermos();
+            //InsertDepartamentoRepo();
+            //UpdateDepartamento();
+            //DeleteDepartamento();
+            //MostrarDepartamentos();
+            AppCrudDepartamentos();
+        }
+
+        static void AppCrudDepartamentos()
+        {
+            int opcion = -1;
+            while (opcion != 4)
+            {
+                Console.WriteLine("------CRUD DEPARTAMENTOS------");
+                MostrarDepartamentos();
+                Console.WriteLine("---------------------");
+                Console.WriteLine("1.- Insertar Departamento");
+                Console.WriteLine("2.- Modificar departamento");
+                Console.WriteLine("3.- Eliminar departamento");
+                Console.WriteLine("4.- Salir de App");
+                Console.WriteLine("Seleccione una opción");
+                opcion = int.Parse(Console.ReadLine());
+                if (opcion == 1)
+                {
+                    InsertDepartamentoRepo();
+                }else if (opcion == 2)
+                {
+                    UpdateDepartamento();
+                }else if (opcion == 3)
+                {
+                    DeleteDepartamento();
+                }else if (opcion == 4)
+                {
+                    Console.WriteLine("Cerrando Aplicación");
+                }
+                else
+                {
+                    Console.WriteLine("Opción incorrecta");
+                }
+            }
+        }
+
+        static void MostrarDepartamentos()
+        {
+            List<Departamento> departamentos = repo.GetDepartamentos();
+            foreach (Departamento dept in departamentos)
+            {
+                Console.WriteLine(dept.IdDepartamento + " - " + dept.Nombre + " - " + dept.Localidad);
+            }
+        }
+
+        static void UpdateDepartamento()
+        {
+            Console.WriteLine("Introduzca ID de departamento a modificar");
+            int iddept = int.Parse(Console.ReadLine());
+            Console.WriteLine("Introduzca nuevo NOMBRE de departamento");
+            string nombre = Console.ReadLine();
+            Console.WriteLine("Introduzca nueva LOCALIDAD");
+            string localidad = Console.ReadLine();
+            int modificados = repo.UpdateDepartamento(iddept, nombre, localidad);
+            Console.WriteLine("Departamentos modificados: " + modificados);
+        }
+
+        static void DeleteDepartamento()
+        {
+            Console.WriteLine("Introduzca ID de departamento para eliminar");
+            int iddept = int.Parse(Console.ReadLine());
+            int eliminados = repo.DeleteDepartamento(iddept);
+            Console.WriteLine("Departamentos eliminados: " + eliminados);
+        }
+
+        static void InsertDepartamentoRepo()
+        {
+            Console.WriteLine("Introduzca ID departamento");
+            int iddept = int.Parse(Console.ReadLine());
+            Console.WriteLine("Introduzca NOMBRE departamento");
+            string nombre = Console.ReadLine();
+            Console.WriteLine("Introduzca LOCALIDAD");
+            string localidad = Console.ReadLine();
+            int insertados = repo.InsertarDepartamento(iddept, nombre, localidad);
+            Console.WriteLine("Departamentos insertados: " + insertados);
         }
 
         static void EliminarEnfermo()
