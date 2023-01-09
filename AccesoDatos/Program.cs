@@ -10,7 +10,93 @@ namespace AccesoDatos
             //InsertarDatosDept();
             //EliminarDeptParameters();
             //LeerRegistrosDept();
-            MostrarEmpleadosDepartamento();
+            //MostrarEmpleadosDepartamento();
+            //ModificarSalas();
+            MostrarEnfermos();
+            EliminarEnfermo();
+            MostrarEnfermos();
+        }
+
+        static void EliminarEnfermo()
+        {
+            string connectionString = @"Data Source=LOCALHOST;Initial Catalog=HOSPITAL;Persist Security Info=True;User ID=SA";
+            SqlConnection cn = new SqlConnection(connectionString);
+            SqlCommand com = new SqlCommand();
+            Console.WriteLine("Introduzca INSCRIPCION para eliminar enfermo");
+            int inscripcion = int.Parse(Console.ReadLine());
+            string sql = "DELETE FROM ENFERMO WHERE INSCRIPCION=@INSCRIPCION";
+            SqlParameter paminscripcion = new SqlParameter("@INSCRIPCION", inscripcion);
+            com.Parameters.Add(paminscripcion);
+            com.Connection = cn;
+            com.CommandType = System.Data.CommandType.Text;
+            com.CommandText = sql;
+            cn.Open();
+            int afectados = com.ExecuteNonQuery();
+            cn.Close();
+            com.Parameters.Clear();
+            Console.WriteLine("Enfermos eliminados: " + afectados);
+        }
+
+        static void MostrarEnfermos()
+        {
+            string connectionString = @"Data Source=LOCALHOST;Initial Catalog=HOSPITAL;Persist Security Info=True;User ID=SA";
+            SqlConnection cn = new SqlConnection(connectionString);
+            SqlCommand com = new SqlCommand();
+            SqlDataReader reader;
+            string sql = "SELECT INSCRIPCION, APELLIDO, DIRECCION FROM ENFERMO";
+            com.Connection = cn;
+            com.CommandType = System.Data.CommandType.Text;
+            com.CommandText = sql;
+            cn.Open();
+            reader = com.ExecuteReader();
+            while (reader.Read())
+            {
+                string inscripcion = reader["INSCRIPCION"].ToString();
+                string apellido = reader["APELLIDO"].ToString();
+                string direccion = reader["DIRECCION"].ToString();
+                Console.WriteLine(inscripcion + " - " + apellido + ", Dirección: " + direccion);
+            }
+            reader.Close();
+            cn.Close();
+        }
+
+
+        static void ModificarSalas()
+        {
+            string connectionString = @"Data Source=LOCALHOST;Initial Catalog=HOSPITAL;Persist Security Info=True;User ID=SA";
+            SqlConnection cn = new SqlConnection(connectionString);
+            SqlCommand com = new SqlCommand();
+            SqlDataReader reader;
+            string sql = "select DISTINCT sala_cod, nombre from sala";
+            com.Connection = cn;
+            com.CommandType = System.Data.CommandType.Text;
+            com.CommandText = sql;
+            cn.Open();
+            reader = com.ExecuteReader();
+            while (reader.Read())
+            {
+                string salacod = reader["SALA_COD"].ToString();
+                string nombre = reader["NOMBRE"].ToString();
+                Console.WriteLine(salacod + " - " + nombre);
+            }
+            reader.Close();
+            //NO CERRAMOS LA CONEXION PORQUE SEGUIMOS HACIENDO CONSULTAS
+            Console.WriteLine("Seleccione un ID de sala para modificar");
+            int idsala = int.Parse(Console.ReadLine());
+            Console.WriteLine("Introduzca el nuevo nombre de sala");
+            string newname = Console.ReadLine();
+            sql = "UPDATE SALA SET NOMBRE=@NEWNAME WHERE SALA_COD=@SALACOD";
+            SqlParameter pamid = new SqlParameter("@SALACOD", idsala);
+            SqlParameter pamnombre = new SqlParameter("@NEWNAME", newname);
+            com.Parameters.Add(pamnombre);
+            com.Parameters.Add(pamid);
+            com.CommandText = sql;
+            //LA CONEXION ESTA ABIERTA, POR LO QUE SIMPLEMENTE VAMOS A EJECUTAR
+            //LA CONSULTA
+            int afectados = com.ExecuteNonQuery();
+            cn.Close();
+            com.Parameters.Clear();
+            Console.WriteLine("Registros modificados: " + afectados);
         }
 
         static void MostrarEmpleadosDepartamento()
